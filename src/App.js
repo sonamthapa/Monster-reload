@@ -1,26 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import Cardlist from './components/card-list/card-list.component'
+import SearchBox from './components/search-box/search-box';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import './App.css'; 
+class App extends Component {
+  state = {
+    monsters: [],
+    searchField: ''
+  }
+  componentDidMount () {
+    fetch('https://jsonplaceholder.typicode.com/users')
+    .then(response => response.json())
+    .then(users => this.setState({monsters: users}))
+  }
+  render() {
+    //destructuring -->pull property and set them const
+    const { monsters, searchField } = this.state;
+    const filteredMonsters = monsters.filter(monster =>
+      monster.name.toLowerCase().includes(searchField.toLowerCase()))
+    // const monsters = this.state.monsters;
+    // const searchField = this.state.searchField;
+    return ( 
+      <div className='app'>
+        <h1>Monster Reload </h1>
+        <SearchBox 
+          placeholder='search monsters'
+          handleChange={e => this.setState({searchField: e.target.value})} />
+     {/* setState is asynchronous so if we want to see|do something with our state do right after we manipulate state. in  anynomus function ,() =>console.log(this.state)*/}
+        <Cardlist monsters={filteredMonsters} />
+      </div>
+    )
+  }
+
 }
 
 export default App;
